@@ -10,11 +10,15 @@ public class CSC500FINALPROJECT {
     private static int bMax;
     private static int b;
     
-    //array that holds randomly generated bandwidth consumption for each pair
+    //array that holds randomly generated bandwidth consumption for each VM pair
     private static double[] vmBandwidth;
     
-    //create the array that holds all PM and switches k^2/4 + k^2 + k^3/4
+    //create the array that holds all PMs and switches k^2/4 + k^2 + k^3/4
     private static Object[] allNetworkElements;
+    
+    //array that holds all edge and bandwidth per edge information
+    //Total number of edges - 3/4 * k^3
+    private static Edge[] allEdges;
     
     public static void main(String[] args) {
         
@@ -22,7 +26,11 @@ public class CSC500FINALPROJECT {
         
         initializeVirtualMachines();
         
-        hopsPerPair(1);
+        initializeEdges();
+        
+        //hopsPerPair(1);
+        
+        
           
     }
     
@@ -54,6 +62,8 @@ public class CSC500FINALPROJECT {
         
         allNetworkElements = new Object[((5*square(k))/4) + (cube(k))/4];
         
+        allEdges = new Edge[3 * cube(k) / 4];
+        
         for(int i = 0; i < (cube(k) / 4); i++){
             allNetworkElements[i] = new PhysicalMachine();
         }
@@ -63,7 +73,7 @@ public class CSC500FINALPROJECT {
         }
         
         for(int i = (cube(k) / 4 + square(k)/2); i < (cube(k) / 4 + square(k)); i++){
-            allNetworkElements[i] = new Switch("aggregation");
+            allNetworkElements[i] = new Switch("aggregation");  
         }
         
         for(int i = (cube(k) / 4 + square(k)); i < allNetworkElements.length; i++){
@@ -77,13 +87,13 @@ public class CSC500FINALPROJECT {
         int whichPhysicalMachine;
         PhysicalMachine element; 
 
-        //initalizing the vm pairs
+        //initalizing the vm pairs to random PMs
         for(int i = 0; i < l; i++){
             
             //first of the pair
-            
             whichPhysicalMachine = (int) (Math.random() * numberOfPhysicalMachines);
             element = (PhysicalMachine) allNetworkElements[whichPhysicalMachine];
+            
             while(!element.addVm(i)){
                 whichPhysicalMachine = (int) (Math.random() * numberOfPhysicalMachines);
                 element = (PhysicalMachine) allNetworkElements[whichPhysicalMachine];
@@ -93,6 +103,7 @@ public class CSC500FINALPROJECT {
             //second of the pair
             whichPhysicalMachine = (int) (Math.random() * numberOfPhysicalMachines);
             element = (PhysicalMachine) allNetworkElements[whichPhysicalMachine];
+            
             while(!element.addVm(i)){
                 whichPhysicalMachine = (int) (Math.random() * numberOfPhysicalMachines);
                 element = (PhysicalMachine) allNetworkElements[whichPhysicalMachine];
@@ -108,6 +119,50 @@ public class CSC500FINALPROJECT {
         }
         
     }
+    
+    public static void initializeEdges(){
+        //simple constants to make loops appear cleaner
+        int a = cube(k) / 4;
+        int b = a + square(k) / 2;
+        int c = square(k) / 2;
+        int d = k / 2;
+        //initialize PM to Edge switch edges
+        for(int i = 0; i < a; i++){
+            allEdges[i] = new Edge(i,a + (i / d));
+        }
+        
+        
+        //initialize Edge switch to Aggregation switch edges
+        int count = a;
+        int count2 = 0;
+        for(int i = a; i < b; i++){
+            for(int j = 0; j < d; j++){
+                allEdges[count] = new Edge(i,b + j + count2);
+                count++;
+            }
+            if((i + 1) % d == 0)
+                count2 += d;
+        }
+        
+        //initialize Aggregation switch edges to Core switch edges
+        count2 = 0;
+        for(int i = b; i < a + square(k);i++){
+            System.out.println(i);
+            for(int j = 0; j < d; j++){
+                //System.out.println(count);
+                allEdges[count] = new Edge(i,a+square(k) + count2);
+                count++;
+                count2++;
+            }
+            if((i+1) % d == 0)
+                count2 = 0;
+        }
+        
+        for(Edge e : allEdges){
+            System.out.println(e);
+        }
+    }
+    
     public static int square(int input){
         return (int)Math.pow(input, 2);
     }
@@ -124,12 +179,13 @@ public class CSC500FINALPROJECT {
             PhysicalMachine currentPM = (PhysicalMachine) allNetworkElements[i];
             System.out.println("CurrentPM vm1: " + currentPM.getVm1() + " CurrentPM Vm2: " + currentPM.getVm2());
             
+            //finds first vm location
             if(vmLocations[0] == -1 && (currentPM.getVm1() == input || currentPM.getVm2() == input)){
                 vmLocations[0] = i;
                 continue;
             }
                 
-            
+            //finds second vm location
             if(vmLocations[0] != -1 && (currentPM.getVm1() == input || currentPM.getVm2() == input) ){
                 vmLocations[1] = i;
                 return vmLocations;
@@ -139,11 +195,12 @@ public class CSC500FINALPROJECT {
         
         return vmLocations;
     }
+    
     public static int hopsPerPair(int input){
         int count = 0;
+        int[] pairLocations = findVmLocation(input);
+       
         
-        for(int i : findVmLocation(input))
-            System.out.println(i);
         
         return count;
     }
