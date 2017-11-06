@@ -8,7 +8,7 @@ public class CSC500FINALPROJECT {
 
     private static int k = 4;
     private static int l = 16;
-    private static int bMin = 2;
+    private static int bMin = 6;
     private static int bMax = 10;
     private static int bandwidthCapacity = 11;
 
@@ -32,13 +32,14 @@ public class CSC500FINALPROJECT {
         
         printPath();
         
-        randomOrderSearch();
+        printEdges();
+        
+        //randomOrderSearch();
 
-        lowestBandwidthVmFirst();
+        //lowestBandwidthVmFirst();
 
-        highestBandwidthVmFirst();
+        //highestBandwidthVmFirst();
 
-        //printEdges();
     }
 
     public static void printPath() {
@@ -52,12 +53,14 @@ public class CSC500FINALPROJECT {
             System.out.println("Connection Path: ");
             path = findPath(i);
             if(path == null){
-                
+                System.out.println("Couldn't allocate bandwidth\n");
             }
             else{
                 for (Integer n : path) {
                 System.out.println(n);
+                
             }
+                System.out.println();
             }
         }
     }
