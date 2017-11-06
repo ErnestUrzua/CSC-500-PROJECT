@@ -15,7 +15,7 @@ public class CSC500FINALPROJECT {
     //array that holds randomly generated bandwidth consumption for each VM pair
     private static double[] vmBandwidth;
 
-    //create the array that holds all PMs and switches k^2/4 + k^2 + k^3/4
+    //create the array that holds all PMs and switches 5/4 * k^2 +  1/4 * k^3 
     private static Object[] allNetworkElements;
 
     //array that holds all edge and bandwidth per edge information
@@ -29,17 +29,14 @@ public class CSC500FINALPROJECT {
         initializeVirtualMachines();
 
         initializeEdges();
-        
+
         printPath();
-        
+
         printEdges();
-        
+
         //randomOrderSearch();
-
         //lowestBandwidthVmFirst();
-
         //highestBandwidthVmFirst();
-
     }
 
     public static void printPath() {
@@ -52,14 +49,13 @@ public class CSC500FINALPROJECT {
             System.out.println("With hops " + hops);
             System.out.println("Connection Path: ");
             path = findPath(i);
-            if(path == null){
+            if (path == null) {
                 System.out.println("Couldn't allocate bandwidth\n");
-            }
-            else{
+            } else {
                 for (Integer n : path) {
-                System.out.println(n);
-                
-            }
+                    System.out.println(n);
+
+                }
                 System.out.println();
             }
         }
@@ -200,7 +196,6 @@ public class CSC500FINALPROJECT {
 //        
 //        System.out.println("Enter b value: ");
 //        bandwidthCapacity = scan.nextInt();
-
         //initialize elements array with total number of elements
         allNetworkElements = new Object[((5 * square(k)) / 4) + (cube(k)) / 4];
 
