@@ -6,11 +6,11 @@ import java.util.Scanner;
 
 public class CSC500FINALPROJECT {
 
-    private static int k = 4;
-    private static int l = 16;
-    private static int bMin = 6;
-    private static int bMax = 10;
-    private static int bandwidthCapacity = 11;
+    private static int k = 32;
+    private static int l = 8192;
+    private static int bMin = 1;
+    private static int bMax = 4;
+    private static int bandwidthCapacity = 10;
 
     //array that holds randomly generated bandwidth consumption for each VM pair
     private static double[] vmBandwidth;
@@ -23,20 +23,44 @@ public class CSC500FINALPROJECT {
     private static Edge[] allEdges;
 
     public static void main(String[] args) {
-
+        if(args.length == 5){
+            initializeFromCommandline(args);
+        }
+        
         initializeValues();
 
         initializeVirtualMachines();
 
         initializeEdges();
 
-        printPath();
+//        printPath();
+//
+//        printEdges();
 
-        printEdges();
-
-        //randomOrderSearch();
-        //lowestBandwidthVmFirst();
-        //highestBandwidthVmFirst();
+        randomOrderSearch();
+        lowestBandwidthVmFirst();
+        highestBandwidthVmFirst();
+    }
+    
+    public static void initializeFromCommandline(String[] input){
+        k = Integer.parseInt(input[0]);
+        
+        l = Integer.parseInt(input[1]);
+        
+        bMin = Integer.parseInt(input[2]);
+        
+        bMax = Integer.parseInt(input[3]);
+        
+        bandwidthCapacity = Integer.parseInt(input[4]);
+    }
+    
+    public static void printParameters(){
+        System.out.println("Initialized with following parameters...");
+        System.out.println("K value: " + k);
+        System.out.println("Number of VM pairs: " + l);
+        System.out.println("Minimum bandwidth per VM pair: " + bMin);
+        System.out.println("Maximum bandwidth per VM pair: " + bMax);
+        System.out.println("Maximum bandwidth allowed per edge: " + bandwidthCapacity + "\n");
     }
 
     public static void printPath() {
@@ -76,7 +100,9 @@ public class CSC500FINALPROJECT {
 
         }
 
-        System.out.println("Total VMs: " + l + " VMs placed: " + count + "\n");
+        System.out.println("Total VMs: " + l + " VMs placed: " + count );
+        float percentagePlaced = (float) count / l;
+        System.out.println("Percentage placed: " + percentagePlaced + "\n");
         return count;
     }
 
@@ -134,7 +160,9 @@ public class CSC500FINALPROJECT {
 
         }
 
-        System.out.println("Total VMs: " + l + " VMs placed: " + count + "\n");
+        System.out.println("Total VMs: " + l + " VMs placed: " + count );
+        float percentagePlaced = (float) count / l;
+        System.out.println("Percentage placed: " + percentagePlaced + "\n");
     }
 
     public static void lowestBandwidthVmFirst() {
@@ -169,7 +197,9 @@ public class CSC500FINALPROJECT {
 
         }
 
-        System.out.println("Total VMs: " + l + " VMs placed: " + count + "\n");
+        System.out.println("Total VMs: " + l + " VMs placed: " + count );
+        float percentagePlaced = (float) count / l;
+        System.out.println("Percentage placed: " + percentagePlaced + "\n");
     }
 
     public static void printEdges() {
@@ -217,6 +247,8 @@ public class CSC500FINALPROJECT {
         for (int i = (cube(k) / 4 + square(k)); i < allNetworkElements.length; i++) {
             allNetworkElements[i] = new Switch("core");
         }
+        
+        printParameters();
 
     }
 
